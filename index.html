@@ -478,6 +478,9 @@ console.log(you.getName());
                         </ul>
                     </section>
                     <section>
+                        <h3>프로토타입을 이용한 상속</h3>
+                    </section>
+                    <section>
                         <pre><code style="max-height: none">
 function create_object(o) {
     function F() {}
@@ -562,13 +565,119 @@ student.getAge = function(){...};
                 <section>
                     <section>
                         <small>
-                            자바스크립트에서는 범용적으로 extend() 함수로 객체에 자신이 원하는 객체 혹은 함수를 추가시킨다!.
+                            자바스크립트에서는 범용적으로 extend() 함수를 추가해서 객체에 자신이 원하는 객체 혹은 함수를 추가시킨다!.
                         </small>
                     </section>
                     <section>
-                        
+                        <pre><code style="max-height: none">
+var person = {
+    name : "down",
+    ...
+};
+
+function create_object(o) {
+...
+}
+
+function extend(obj, prop) {
+    if (!prop) { prop = obj; obj = this; }
+    for ( var i in prop ) obj[i] = prop[i];
+    return obj;
+}
+
+var student = create_object(person);
+var added = {
+    setAge : function(age) {
+        this.age = age;
+    },
+    getAge : function() {
+        return this.age;
+    }
+};
+
+extend(student, added);
+
+student.setAge(25);
+console.log(student.getAge()); // Result : 25
+                        </code></pre>
+                    </section>
+                    <section>
+                        <small>
+                            extend() 함수를 이용하여 student 객체를 확장시켰다!.<br>
+                            extend()함수는 사용자에게 유연하게 기능을 확장시킬수 있게 하는 주요 함수이고<br>
+                            상속에서도 자식 클래스를 확장할때 유용하게 사용되므로 기억해두자.
+                        </small>
                     </section>
                 </section>
+
+                <section>
+                    <section>
+                        <h3>클래스 기반의 상속</h3>
+                        <small class="fragment">클래스의 역할을 하는 함수로 상속을 구현한다.</small>
+                    </section>
+                    <section>
+                        <pre><code style="max-height: none">
+function Person(arg) {
+    this.name = arg;
+}
+
+Person.prototype.setName = function(value) {
+    this.name = value;
+};
+
+Person.prototype.getName = function() {
+    return this.name;
+};
+
+function Student (arg) { }
+
+var you = new Person("you");
+
+Student.prototype = you;
+var me = new Student("me");
+me.setName("me");
+console.log(me.getName());
+                        </code></pre>
+                        <small>
+                            Student 함수 객체를 만들어서, 이 객체가 Person함수의 객체 인스턴스를 참조하게 하였다.<br>
+                            이렇게하면 me 의 [[Prototype]] 링크가 생성자의 프로토타입인 Student.prototype을 가르키고<br>
+                            new Person()으로 만들어진 객체의 [[Prototype]] 링크는 Person.prototype을 가르키는
+                            프로토타입이 형성된다.<br>
+                            따라서 me 는 Person.prototype 프로퍼티에 접근 가능하다.
+                        </small><br><br>
+                        <small class="fragment">
+                            그런데 Student는 빈객체이다..!
+                        </small>
+                    </section>
+                    <section>
+                        <pre><code style="max-height: none">
+function Student(arg) {
+    Person.apply(this, arguments);
+}
+                        </code></pre>
+                        <small>
+                            Student 함수 안에서 새롭게 생성된 객체를 apply 함수의 첫번째 인자로 넘겨 Person을 실행시킨다<br>
+                            이런방식으로 자식 클래스의 인스턴스에서도 부모 클래스의 생성자를 실행 시킬 수 있다.<br>
+                        </small>
+                    </section>
+                    <section>
+                        <h3>좀더 발전시켜보자!</h3>
+                        <small class="fragment">
+                            현재는 자식클래스가 부모클래스의 객체를 프로토타입 체인으로 직접 접근한다!
+                            부모클래스의 인스턴스와 자식 클래스의 인스턴스는 서로 독립적일 필요가 있다.!
+                        </small><br><br>
+                        <small class="fragment">
+                            자식 클래스의 prototype이 부모클래스의 인스턴스를 참조한다.<br>
+                            이 구조라면 자식 클래스의 prototype에 메소드를 추가할 때 문제가 된다.<br>
+                            이는 부모 클래스의 인스턴스인 you와 자식 클래스의 인스턴스 me 가 독립적일 필요가 있음을 의미한다.
+                        </small><br><br>
+                        <small class="fragment">두 클래스의 프토토타입 사이에 중개자를 하나 만들어보자</small>
+                    </section>
+                    <section>
+
+                    </section>
+                </section>
+
                 <section>
                     <h2>Slides</h2>
                     <p>
